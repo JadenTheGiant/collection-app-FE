@@ -11,7 +11,7 @@ const AKPlusV2 = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/users")
+    fetch(`${import.meta.env.VITE_API_URL}/api/users`)
       .then((res) => res.json())
       .then((data) => {
         setCards(data);
@@ -26,7 +26,7 @@ const AKPlusV2 = () => {
     );
     setCards(updated);
 
-    await fetch(`http://localhost:5000/api/users/${id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, collected: !collected }),
