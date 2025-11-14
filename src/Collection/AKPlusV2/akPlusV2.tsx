@@ -11,7 +11,10 @@ const AKPlusV2 = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/users`)
+    const token = localStorage.getItem("token");
+    fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    })
       .then((res) => res.json())
       .then((data) => {
         setCards(data);
@@ -26,9 +29,13 @@ const AKPlusV2 = () => {
     );
     setCards(updated);
 
+    const token = localStorage.getItem("token");
     await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ id, collected: !collected }),
     });
   };
@@ -42,24 +49,36 @@ const AKPlusV2 = () => {
         <table className="min-w-full border border-gray-400 border-collapse">
           <thead className="bg-blue-500 text-white">
             <tr>
-              <th className="py-3 px-2 w-14 border border-gray-400 text-center">No</th>
-              <th className="py-3 px-2 w-24 border border-gray-400 text-center">Collected</th>
-              <th className="py-3 px-4 border border-gray-400 text-center w-auto">Item</th>
+              <th className="py-3 px-2 w-14 border border-gray-400 text-center">
+                No
+              </th>
+              <th className="py-3 px-2 w-24 border border-gray-400 text-center">
+                Collected
+              </th>
+              <th className="py-3 px-4 border border-gray-400 text-center w-auto">
+                Item
+              </th>
             </tr>
           </thead>
           <tbody>
             {cards.map((card, index) => (
               <tr key={card._id} className="hover:bg-blue-50 transition-colors">
-                <td className="py-3 px-2 border border-gray-400 text-center">{index + 1}</td>
+                <td className="py-3 px-2 border border-gray-400 text-center">
+                  {index + 1}
+                </td>
                 <td className="py-3 px-2 border border-gray-400 text-center">
                   <input
                     type="checkbox"
                     checked={card.collected}
-                    onChange={() => handleToggleCollected(card._id, card.collected)}
+                    onChange={() =>
+                      handleToggleCollected(card._id, card.collected)
+                    }
                     className="w-5 h-5 accent-blue-500 cursor-pointer"
                   />
                 </td>
-                <td className="py-3 px-4 border border-gray-400 text-start">{card.name}</td>
+                <td className="py-3 px-4 border border-gray-400 text-start">
+                  {card.name}
+                </td>
               </tr>
             ))}
           </tbody>
