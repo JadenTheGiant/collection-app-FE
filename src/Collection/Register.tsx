@@ -24,17 +24,9 @@ const Register: React.FC = () => {
           password: form.password,
         }),
       });
-
-      let data = null;
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        data = await res.json();
-      }
-
+      const data = await res.json();
       if (!res.ok) {
-        setError(
-          (data && data.message) || `Registration failed (${res.status})`
-        );
+        setError(data.message || "Registration failed");
       } else {
         setSuccess("Registration successful! Please login.");
         setForm({ username: "", password: "" });
